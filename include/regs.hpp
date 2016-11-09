@@ -31,7 +31,7 @@ class Vtlb;
 
 class Sys_regs
 {
-    protected:
+    public:
         union {
             struct {
 #ifdef __x86_64__
@@ -53,7 +53,7 @@ class Sys_regs
                 mword   REG(cx);
                 mword   REG(ax);
             };
-            mword gpr[];
+            mword gpr[0];
         };
 
     public:
@@ -89,7 +89,7 @@ class Sys_regs
 
 class Exc_regs : public Sys_regs
 {
-    protected:
+    public:
         union {
             struct {
                 mword   gs;
