@@ -33,7 +33,7 @@ Console_serial::Console_serial()
     char *mem = static_cast<char *>(Hpt::remap (0));
     if (!(base = *reinterpret_cast<uint16 *>(mem + 0x400)) &&
         !(base = *reinterpret_cast<uint16 *>(mem + 0x402)))
-        return;
+        base = 0x3F8;
 
     out (LCR, 0x80);
     out (DLL, (freq / 115200) & 0xff);
