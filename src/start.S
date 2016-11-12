@@ -89,12 +89,42 @@ __boot_gdt__:
  */
 .code16
 
-__start_ap:             INIT_PAGING
-                        lgdtl   %cs:__gdt_desc - __start_ap
-                        ljmpl   $SEL_KERN_CODE, $__start_all
+__start_ap:             cli
+                        ljmpl    $0x8, $1f + 0x1000 - (__start_ap + SEL_KERN_CODE << 4)
 
-__gdt_desc:             .word   __boot_gdt__ - __boot_gdt - 1
-                        .long   __boot_gdt
+1:                      // init segment registers
+                        mov     %cs, %ax
+                        mov     %ax, %ds
+                        mov     %ax, %es
+                        mov     %ax, %ss
+                        // load temporary GDT
+                        lgdtl   %ds:__prot_gdt + 2 + 0x1000 - (__start_ap + SEL_KERN_CODE << 4)
+                        // enable protected mode
+                        mov     $0x1, %eax
+                        mov     %eax, %cr0
+                        // far jump to protected mode
+                        ljmpl   $0x8, $__prot_mode_ap + 0x1000 - __start_ap
+
+.code32
+
+__prot_mode_ap:         // set segment registers to use the 32-bit DS
+                        mov     $0x18, %ax
+                        mov     %ax, %ds
+                        mov     %ax, %es
+                        mov     %ax, %ss
+                        // setup paging and enable long mode
+                        INIT_PAGING
+                        // far jump to long mode
+                        ljmpl    $0x10, $__start_all
+
+.align                  8, 0x90
+__prot_gdt:             .word   0
+                        .word   __prot_gdt__ - __prot_gdt - 1
+                        .long   __prot_gdt + 0x1000 - __start_ap
+                        .quad   0x00cf9b000000ffff      // 32-bit CS
+                        .quad   0x00af9b000000ffff      // 64-bit CS
+                        .quad   0x00cf93000000ffff      // 32-bit DS
+__prot_gdt__:
 
 /*
  * BSP Startup Code
@@ -144,16 +174,11 @@ __start_bsp:            mov     $(__start_bsp - __start_ap), %ecx
                         mov     $0x8001002b, %rdx
                         mov     %rdx, %cr0
 
-                        lgdt    __boot_gdt + 2
-
 /*
  * Common Startup Code
  */
-#ifdef __x86_64__
-.code64
-#endif
-
-__start_all:            INIT_STATE
+__start_all:            lgdt    __boot_gdt + 2
+                        INIT_STATE
                         test    %REG(bx), %REG(bx)
                         je      2f
 
