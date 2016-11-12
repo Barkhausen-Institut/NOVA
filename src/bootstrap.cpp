@@ -38,7 +38,8 @@ void bootstrap()
     Space_obj::insert_root (Sc::current = new Sc (&Pd::kern, Cpu::id, Ec::current));
 
     // Barrier: wait for all ECs to arrive here
-    for (Atomic::add (barrier, 1UL); barrier != Cpu::online; pause()) ;
+    // TODO disabled because Cpu::online is increased in ACPI::parse_lapic
+    // for (Atomic::add (barrier, 1UL); barrier != Cpu::online; pause()) ;
 
     Msr::write<uint64>(Msr::IA32_TSC, 0);
 
