@@ -99,7 +99,7 @@ __gdt_desc:             .word   __boot_gdt__ - __boot_gdt - 1
 /*
  * BSP Startup Code
  */
-.code32
+.code64
 
 __start_bsp:            mov     $(__start_bsp - __start_ap), %ecx
                         mov     $__start_ap, %esi
@@ -132,9 +132,19 @@ __start_bsp:            mov     $(__start_bsp - __start_ap), %ecx
                         cmp     $LINK_E, %ecx
                         jb      1b
 
-                        INIT_PAGING
+                        // init paging
+                        mov     $0xc0000080, %ecx
+                        rdmsr
+                        or      $0x101, %eax
+                        wrmsr
+                        mov     $0x6b8, %rdx
+                        mov     %rdx, %cr4
+                        mov     $PDBR, %rdx
+                        mov     %rdx, %cr3
+                        mov     $0x8001002b, %rdx
+                        mov     %rdx, %cr0
+
                         lgdt    __boot_gdt + 2
-                        ljmp    $SEL_KERN_CODE, $__start_all
 
 /*
  * Common Startup Code
