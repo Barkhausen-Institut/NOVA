@@ -43,11 +43,12 @@ bool        Acpi_table_madt::sci_overridden = false;
 
 void Acpi::delay (unsigned ms)
 {
-    unsigned cnt = timer_frequency * ms / 1000;
-    unsigned val = read (PM_TMR);
+    // TODO not support on gem5
+    // unsigned cnt = timer_frequency * ms / 1000;
+    // unsigned val = read (PM_TMR);
 
-    while ((read (PM_TMR) - val) % (1UL << 24) < cnt)
-        pause();
+    // while ((read (PM_TMR) - val) % (1UL << 24) < cnt)
+    //     pause();
 }
 
 uint64 Acpi::time()
