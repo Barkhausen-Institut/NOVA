@@ -18,6 +18,8 @@
 
 #include "acpi.hpp"
 #include "acpi_rsdp.hpp"
+#include "cpu.hpp"
+#include "lapic.hpp"
 #include "hpt.hpp"
 
 Acpi_rsdp *Acpi_rsdp::find (mword start, unsigned len)
@@ -38,8 +40,14 @@ void Acpi_rsdp::parse()
     mword map = reinterpret_cast<mword>(Hpt::remap (0));
 
     if (!(rsdp = Acpi_rsdp::find (map + (*reinterpret_cast<uint16 *>(map + 0x40e) << 4), 0x400)) &&
-        !(rsdp = Acpi_rsdp::find (map + 0xe0000, 0x20000)))
+        !(rsdp = Acpi_rsdp::find (map + 0xe0000, 0x20000))) {
+
+        // hardcode LAPIC ids on gem5
+        Lapic::apic_id[Cpu::online++] = 0;
+        Lapic::apic_id[Cpu::online++] = 1;
+
         return;
+    }
 
     Acpi::rsdt = rsdp->rsdt_addr;
 

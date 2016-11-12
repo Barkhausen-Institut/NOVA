@@ -39,7 +39,7 @@ void bootstrap()
 
     // Barrier: wait for all ECs to arrive here
     // TODO disabled because Cpu::online is increased in ACPI::parse_lapic
-    // for (Atomic::add (barrier, 1UL); barrier != Cpu::online; pause()) ;
+    for (Atomic::add (barrier, 1UL); barrier != Cpu::online; pause()) ;
 
     Msr::write<uint64>(Msr::IA32_TSC, 0);
 
