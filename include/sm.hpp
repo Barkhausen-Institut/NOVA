@@ -51,7 +51,7 @@ class Sm : public Kobject, public Queue<Ec>
         }
 
         ALWAYS_INLINE
-        inline void up()
+        inline void up(void (*c)() = Ec::sys_finish<Sys_regs::SUCCESS>)
         {
             Ec *e;
 
@@ -63,7 +63,7 @@ class Sm : public Kobject, public Queue<Ec>
                 }
             }
 
-            e->release();
+            e->release(c);
         }
 
         ALWAYS_INLINE

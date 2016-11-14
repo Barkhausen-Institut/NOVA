@@ -4,7 +4,9 @@
  * Copyright (C) 2009-2011 Udo Steinberg <udo@hypervisor.org>
  * Economic rights: Technische Universitaet Dresden (Germany)
  *
- * Copyright (C) 2012 Udo Steinberg, Intel Corporation.
+ * Copyright (C) 2012-2013 Udo Steinberg, Intel Corporation.
+ * Copyright (C) 2014 Udo Steinberg, FireEye, Inc.
+ * Copyright (C) 2013-2014 Alexander Boettcher, Genode Labs GmbH
  *
  * This file is part of the NOVA microhypervisor.
  *
@@ -66,6 +68,7 @@ class Sc : public Kobject
 
         Sc (Pd *, mword, Ec *);
         Sc (Pd *, mword, Ec *, unsigned, unsigned, unsigned);
+        Sc (Pd *, Ec *, unsigned, Sc *);
 
         ALWAYS_INLINE
         static inline Rq *remote (unsigned long c)
