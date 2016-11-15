@@ -363,8 +363,13 @@ void Ec::xcpu_return()
     current->utcb    = nullptr;
     current->fpu     = nullptr;
 
-    Rcu::call(current);
-    Rcu::call(Sc::current);
+    // better delete them now to free the memory immediately. otherwise, we need to allocate more
+    // memory from the buddy allocator every ~5 xcpu IPCs.
+    // XXX this is not correct, because we access Sc::current in Sc::schedule
+    delete current;
+    delete Sc::current;
+    // Rcu::call(current);
+    // Rcu::call(Sc::current);
 
     Sc::schedule(true);
 }
