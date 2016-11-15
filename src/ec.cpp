@@ -254,12 +254,16 @@ void Ec::idle()
 {
     for (;;) {
 
+        // XXX we have to put the cli a bit further away from hlt. otherwise gem5 simply ignores
+        // pending IPIs until we receive the next interrupt.
+        asm volatile ("cli");
         mword hzd = Cpu::hazard & (HZD_RCU | HZD_SCHED);
-        if (EXPECT_FALSE (hzd))
+        if (EXPECT_FALSE (hzd)) {
             handle_hazard (hzd, idle);
+        }
 
         uint64 t1 = rdtsc();
-        asm volatile ("sti; hlt; cli" : : : "memory");
+        asm volatile ("sti; hlt" : : : "memory");
         uint64 t2 = rdtsc();
 
         Counter::cycles_idle += t2 - t1;
