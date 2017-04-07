@@ -603,6 +603,11 @@ void Ec::ret_xcpu_reply()
     ret_user_sysexit();
 }
 
+void Ec::sys_noop()
+{
+    sys_finish<Sys_regs::SUCCESS>();
+}
+
 extern "C"
 void (*const syscall[])() =
 {
@@ -621,7 +626,8 @@ void (*const syscall[])() =
     &Ec::sys_sm_ctrl,
     &Ec::sys_assign_pci,
     &Ec::sys_assign_gsi,
-    &Ec::sys_pd_ctrl,
+    // &Ec::sys_pd_ctrl,
+    &Ec::sys_noop,
 };
 
 template void Ec::sys_finish<Sys_regs::COM_ABT>();

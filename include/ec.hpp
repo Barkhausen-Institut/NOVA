@@ -298,6 +298,9 @@ class Ec : public Kobject, public Refcount, public Queue<Sc>
         static void sys_xcpu_call();
 
         NORETURN
+        static void sys_noop();
+
+        NORETURN
         static void idle();
 
         NORETURN
