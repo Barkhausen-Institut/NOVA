@@ -54,9 +54,9 @@ PFLAGS		:= $(addprefix -D, $(DEFINES)) $(addprefix -I, $(INC_DIR))
 DFLAGS		:= -MP -MMD -pipe
 OFLAGS		:= -Os
 ifeq ($(ARCH),x86_32)
-AFLAGS		:= -m32 -march=i686 -mpreferred-stack-boundary=2 -mregparm=3
+AFLAGS		:= -m32 -march=i686 -mpreferred-stack-boundary=2 -mregparm=3 -fno-PIC
 else ifeq ($(ARCH),x86_64)
-AFLAGS		:= -m64 -march=core2 -mpreferred-stack-boundary=4 -mcmodel=kernel -mno-red-zone
+AFLAGS		:= -m64 -march=core2 -mpreferred-stack-boundary=4 -mcmodel=kernel -mno-red-zone -fno-PIC
 else
 $(error $(ARCH) is not a valid architecture)
 endif
