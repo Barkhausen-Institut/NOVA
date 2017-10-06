@@ -78,7 +78,7 @@ void Lapic::init()
         // freq_tsc = (t2 - t1) / 10;
         // freq_bus = (v1 - v2) / 10;
 
-        freq_tsc = 1000000;
+        freq_tsc = 3000000;
         freq_bus = 10000;
 
         trace (TRACE_APIC, "TSC:%u kHz BUS:%u kHz", freq_tsc, freq_bus);
