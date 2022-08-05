@@ -56,7 +56,7 @@ class Ioapic : public List<Ioapic>
         ALWAYS_INLINE
         inline void index (Register reg)
         {
-            *reinterpret_cast<uint8 volatile *>(reg_base + IOAPIC_IDX) = reg;
+            *reinterpret_cast<uint32 volatile *>(reg_base + IOAPIC_IDX) = reg;
         }
 
         ALWAYS_INLINE
