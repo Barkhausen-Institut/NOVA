@@ -102,9 +102,12 @@ void Cpu::check_features()
             tpp      =  ebx >> 16 & 0xff;
     }
 
-    // TODO not implemented in gem5
-    // patch = static_cast<unsigned>(Msr::read<uint64>(Msr::IA32_BIOS_SIGN_ID) >> 32);
+// TODO not implemented in gem5
+#if !defined(GEM5)
+    patch = static_cast<unsigned>(Msr::read<uint64>(Msr::IA32_BIOS_SIGN_ID) >> 32);
+#else
     patch = 0;
+#endif
 
     cpuid (0x80000000, eax, ebx, ecx, edx);
 
@@ -145,7 +148,9 @@ void Cpu::check_features()
 void Cpu::setup_thermal()
 {
     // TODO not implemented in gem5
-    // Msr::write (Msr::IA32_THERM_INTERRUPT, 0x10);
+#if !defined(GEM5)
+    Msr::write (Msr::IA32_THERM_INTERRUPT, 0x10);
+#endif
 }
 
 void Cpu::setup_sysenter()

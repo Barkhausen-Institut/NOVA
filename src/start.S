@@ -89,6 +89,8 @@ __boot_gdt__:
  */
 .code16
 
+#ifdef GEM5
+
 __start_ap:             cli
                         ljmpl    $0x8, $1f + 0x1000 - (__start_ap + SEL_KERN_CODE << 4)
 
@@ -126,10 +128,25 @@ __prot_gdt:             .word   0
                         .quad   0x00cf93000000ffff      // 32-bit DS
 __prot_gdt__:
 
+#else
+
+__start_ap:             INIT_PAGING
+                        lgdtl   %cs:__gdt_desc - __start_ap
+                        ljmpl   $SEL_KERN_CODE, $__start_all
+
+__gdt_desc:             .word   __boot_gdt__ - __boot_gdt - 1
+                        .long   __boot_gdt
+
+#endif
+
 /*
  * BSP Startup Code
  */
+#ifdef GEM5
 .code64
+#else
+.code32
+#endif
 
 __start_bsp:            mov     $(__start_bsp - __start_ap), %ecx
                         mov     $__start_ap, %esi
@@ -163,6 +180,7 @@ __start_bsp:            mov     $(__start_bsp - __start_ap), %ecx
                         jb      1b
 
                         // init paging
+#ifdef GEM5
                         mov     $0xc0000080, %ecx
                         rdmsr
                         or      $0x101, %eax
@@ -174,10 +192,23 @@ __start_bsp:            mov     $(__start_bsp - __start_ap), %ecx
                         mov     $0x8001002b, %rdx
                         mov     %rdx, %cr0
 
+__start_all:            lgdt    __boot_gdt + 2
+
+#else
+                        INIT_PAGING
+                        lgdt    __boot_gdt + 2
+                        ljmp    $SEL_KERN_CODE, $__start_all
+
 /*
  * Common Startup Code
  */
-__start_all:            lgdt    __boot_gdt + 2
+#ifdef __x86_64__
+.code64
+#endif
+
+__start_all:
+#endif
+
                         INIT_STATE
                         test    %REG(bx), %REG(bx)
                         je      2f

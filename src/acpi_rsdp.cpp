@@ -42,9 +42,11 @@ void Acpi_rsdp::parse()
     if (!(rsdp = Acpi_rsdp::find (map + (*reinterpret_cast<uint16 *>(map + 0x40e) << 4), 0x400)) &&
         !(rsdp = Acpi_rsdp::find (map + 0xe0000, 0x20000))) {
 
+#if defined(GEM5)
         // hardcode LAPIC ids on gem5
         Lapic::apic_id[Cpu::online++] = 0;
         Lapic::apic_id[Cpu::online++] = 1;
+#endif
 
         return;
     }

@@ -25,6 +25,7 @@ INSTALL		:= install
 LD		:= /tmp/nre-cross-x86_64/bin/x86_64-pc-nulnova-ld
 RM		:= rm -f
 SIZE		:= size
+GEM5		?= 1
 
 SRC_DIR		:= ../src
 INC_DIR		:= ../include
@@ -47,6 +48,9 @@ gitrv = $(shell (git rev-parse HEAD 2>/dev/null || echo 0) | cut -c1-7)
 
 # Preprocessor options
 DEFINES		:=
+ifeq ($(GEM5),1)
+DEFINES     += GEM5=1
+endif
 VPATH		:= $(SRC_DIR)
 PFLAGS		:= $(addprefix -D, $(DEFINES)) $(addprefix -I, $(INC_DIR))
 
